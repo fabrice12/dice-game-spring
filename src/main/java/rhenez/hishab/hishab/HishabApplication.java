@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableFeignClients
+
 public class HishabApplication {
 
     public static void main(String[] args) {
