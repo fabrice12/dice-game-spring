@@ -29,7 +29,13 @@ public class GameService {
         return finalScore;
     }
     public void gameOver(){
-        players.clear();
+        for (Player player:this.getPlayers()){
+            player.setScore(-1);
+            player.setPlayerScoringStopped(false);
+            player.setCanPlay(false);
+            player.setLastScore(null);
+            player.setGameStarted(false);
+        }
         isGameStarted=false;
         allowedPlayerNumber=1;
         setGameEnded(true);

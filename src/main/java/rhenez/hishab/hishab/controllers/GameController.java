@@ -1,5 +1,6 @@
 package rhenez.hishab.hishab.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rhenez.hishab.hishab.api.ThrowDice;
+import rhenez.hishab.hishab.dto.PlayDto;
 import rhenez.hishab.hishab.dto.PlayerDto;
 import rhenez.hishab.hishab.models.BaseResponse;
 import rhenez.hishab.hishab.models.PlayResponse;
@@ -32,6 +34,7 @@ public class GameController {
         this.throwDice = throwDice;
     }
 
+    @Operation(summary = "Api used for player registration")
     @PostMapping("/player-registration")
     public ResponseEntity<RegisterResponse> registerPlayer(@Valid @RequestBody PlayerDto playerDto) {
 
@@ -53,7 +56,7 @@ public class GameController {
 
 
     }
-
+    @Operation(summary = "Api used to start the game")
     @GetMapping("/start-game")
     public ResponseEntity<BaseResponse> startGame() {
         if (gameService.getPlayers().size() < gameService.getMinPlayers()) {
@@ -68,13 +71,15 @@ public class GameController {
 
     }
 
+    @Operation(summary = "Api used to actually play (throw a dice)")
     @PostMapping("/play")
-    public PlayResponse play(@RequestBody Player jsonPlayer) {
+    public PlayResponse play(@RequestBody PlayDto playDto) {
         List<Player> players = gameService.getPlayers();
-//search for current player
+
         if (gameService.isGameStarted()) {
             for (Player player : players) {
-                if (player.getName().equals(jsonPlayer.getName())) {
+                //search for current player
+                if (player.getPlayerNumber().equals(playDto.getPlayerNumber())) {
 
                     if (player.getPlayerNumber().equals(gameService.getAllowedPlayerNumber())) {
                         Integer existingScore = player.getScore();
@@ -129,7 +134,7 @@ public class GameController {
                                     break;
                             }
                         }
-                        log.info("you are score " + newScore);
+                        log.info("Player name: " + player.getName()+",Total score: "+player.getScore()+", Current Value of dice: "+newScore);
 
                         return new PlayResponse("Dice thrown successfully", 1, newScore, gameService.getAllowedPlayerNumber(), player.getScore());
                     } else {
@@ -145,7 +150,7 @@ public class GameController {
 
     }
 
-
+    @Operation(summary = "Api used to get all players points and status")
     @GetMapping("/all-players")
     public List<Player> getPlayers() {
         return gameService.getPlayers();

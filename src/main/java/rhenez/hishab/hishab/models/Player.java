@@ -24,7 +24,7 @@ public class Player  {
     boolean gameStarted=false;
 //    to hold last score from a dice throw
     Integer lastScore;
-
+    @JsonIgnore
     boolean playerScoringStopped=false;
 
     public Player() {
